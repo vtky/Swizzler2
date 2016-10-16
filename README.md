@@ -11,7 +11,7 @@ Swizzler 2 will now be a collection of Frida scripts that will perform similar f
 
 A guide will also be provided for testing of iOS applications on non-jailbroken iOS devices. The latest and greatest iOS version (currently 10.1b3) will be used for testing.
 
-Stuff will be slowly organised and released over the next coming weeks. 
+Start by checking out the [wiki!](https://github.com/vtky/Swizzler2/wiki)
 
 ## Contact
 Create an issue here or tweet me [@vincent_tky](https://twitter.com/vincent_tky)
