@@ -97,3 +97,90 @@ Interceptor.attach(Module.findExportByName(null, "CCCrypt"), {
 
     }
 });
+
+
+
+
+
+
+
+
+
+void replaced_CCHmac (CCHmacAlgorithm algorithm, const void *key, size_t keyLength, const void *data, size_t dataLength, void *macOut)
+{
+    NSString *nsstring_data = NSData2Hex([NSData dataWithBytes:data length:dataLength]);
+    DDLogVerbose(@"CCHmac data: %@", nsstring_data);
+    DDLogVerbose(@"CCHmac alg: %s, key: %@, keyLength: %lu bits", getHMACAlgorithmName(algorithm), NSData2Hex([NSData dataWithBytes:key length:keyLength]), keyLength*8);
+    orig_CCHmac(algorithm, key, keyLength, data, dataLength, macOut);
+}
+/*
+ Common HMAC Algorithm Interfaces
+ This interface provides access to a number of HMAC algorithms. The following algorithms are available:
+
+     kCCHmacAlgSHA1    - HMAC with SHA1 digest
+
+     kCCHmacAlgMD5     - HMAC with MD5 digest
+
+     kCCHmacAlgSHA256  - HMAC with SHA256 digest
+
+     kCCHmacAlgSHA384  - HMAC with SHA384 digest
+
+     kCCHmacAlgSHA224  - HMAC with SHA224 digest
+
+     kCCHmacAlgSHA512  - HMAC with SHA512 digest
+
+ The object declared in this interface, CCHmacContext, provides a handle
+ for use with the CCHmacInit() CCHmacUpdate() and CCHmacFinal() calls to
+ complete the HMAC operation.  In addition there is a one shot function,
+ CCHmac() that performs a complete HMAC on a single piece of data.
+
+ void CCHmacInit(CCHmacContext *ctx, CCHmacAlgorithm algorithm, const void *key, size_t keyLength);
+ void CCHmacUpdate(CCHmacContext *ctx, const void *data, size_t dataLength);
+ void CCHmacFinal(CCHmacContext *ctx, void *macOut);
+ void CCHmac(CCHmacAlgorithm algorithm, const void *key, size_t keyLength, const void *data, size_t dataLength, void *macOut);
+*/
+
+var CCHmacAlgorithm = {
+    0: { name: "kCCHmacAlgSHA1"},
+    1: { name: "kCCHmacAlgMD5"},
+    2: { name: "kCCHmacAlgSHA256"},
+    3: { name: "kCCHmacAlgSHA384"},
+    4: { name: "kCCHmacAlgSHA512"},
+    5: { name: "kCCHmacAlgSHA224"}
+};
+
+
+Interceptor.attach(Module.findExportByName(null, "CCHmac"), {
+    onEnter: function (args) {
+        var algorithm = args[0].toInt32();
+        var key = args[1];
+        var keyLength = args[2].toInt32();
+        var data = args[3];
+        var dataLength = args[4].toInt32();
+        var macOut = args[5];
+
+        var strKey = ba2hex(Memory.readByteArray(key, keyLength));
+
+        var strData = ba2hex(Memory.readByteArray(data, dataLength));
+
+        console.log("CCCrypt " + CCHmacAlgorithm[algorithm].name + " key:" + strKey + " keyLength:" + keyLength*8 + " data:" + strData);
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
