@@ -106,13 +106,13 @@ Interceptor.attach(Module.findExportByName(null, "CCCrypt"), {
 
 
 
-void replaced_CCHmac (CCHmacAlgorithm algorithm, const void *key, size_t keyLength, const void *data, size_t dataLength, void *macOut)
-{
-    NSString *nsstring_data = NSData2Hex([NSData dataWithBytes:data length:dataLength]);
-    DDLogVerbose(@"CCHmac data: %@", nsstring_data);
-    DDLogVerbose(@"CCHmac alg: %s, key: %@, keyLength: %lu bits", getHMACAlgorithmName(algorithm), NSData2Hex([NSData dataWithBytes:key length:keyLength]), keyLength*8);
-    orig_CCHmac(algorithm, key, keyLength, data, dataLength, macOut);
-}
+// void replaced_CCHmac (CCHmacAlgorithm algorithm, const void *key, size_t keyLength, const void *data, size_t dataLength, void *macOut)
+// {
+//     NSString *nsstring_data = NSData2Hex([NSData dataWithBytes:data length:dataLength]);
+//     DDLogVerbose(@"CCHmac data: %@", nsstring_data);
+//     DDLogVerbose(@"CCHmac alg: %s, key: %@, keyLength: %lu bits", getHMACAlgorithmName(algorithm), NSData2Hex([NSData dataWithBytes:key length:keyLength]), keyLength*8);
+//     orig_CCHmac(algorithm, key, keyLength, data, dataLength, macOut);
+// }
 /*
  Common HMAC Algorithm Interfaces
  This interface provides access to a number of HMAC algorithms. The following algorithms are available:
@@ -163,11 +163,64 @@ Interceptor.attach(Module.findExportByName(null, "CCHmac"), {
 
         var strData = ba2hex(Memory.readByteArray(data, dataLength));
 
-        console.log("CCCrypt " + CCHmacAlgorithm[algorithm].name + " key:" + strKey + " keyLength:" + keyLength*8 + " data:" + strData);
+        console.log("CCHmac " + CCHmacAlgorithm[algorithm].name + " key:" + strKey + " keyLength:" + keyLength*8 + " data:" + strData);
     }
 });
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// extern int CC_SHA1_Init(CC_SHA1_CTX *c);
+// extern int CC_SHA1_Update(CC_SHA1_CTX *c, const void *data, CC_LONG len);
+// extern int CC_SHA1_Final(unsigned char *md, CC_SHA1_CTX *c);
+// extern unsigned char *CC_SHA1(const void *data, CC_LONG len, unsigned char *md);
+// extern int CC_SHA224_Init(CC_SHA256_CTX *c);
+// extern int CC_SHA224_Update(CC_SHA256_CTX *c, const void *data, CC_LONG len);
+// extern int CC_SHA224_Final(unsigned char *md, CC_SHA256_CTX *c);
+// extern unsigned char *CC_SHA224(const void *data, CC_LONG len, unsigned char *md);
+// extern int CC_SHA256_Init(CC_SHA256_CTX *c);
+// extern int CC_SHA256_Update(CC_SHA256_CTX *c, const void *data, CC_LONG len);
+// extern int CC_SHA256_Final(unsigned char *md, CC_SHA256_CTX *c);
+// extern unsigned char *CC_SHA256(const void *data, CC_LONG len, unsigned char *md);
+// extern int CC_SHA384_Init(CC_SHA512_CTX *c);
+// extern int CC_SHA384_Update(CC_SHA512_CTX *c, const void *data, CC_LONG len);
+// extern int CC_SHA384_Final(unsigned char *md, CC_SHA512_CTX *c);
+// extern unsigned char *CC_SHA384(const void *data, CC_LONG len, unsigned char *md);
+// extern int CC_SHA512_Init(CC_SHA512_CTX *c);
+// extern int CC_SHA512_Update(CC_SHA512_CTX *c, const void *data, CC_LONG len);
+// extern int CC_SHA512_Final(unsigned char *md, CC_SHA512_CTX *c);
+// extern unsigned char *CC_SHA512(const void *data, CC_LONG len, unsigned char *md);
+
+Interceptor.attach(Module.findExportByName(null, "CC_SHA256"), {
+    onEnter: function (args) {
+        var data = args[0];
+        var dataLength = args[1].toInt32();
+        this.mdOut = args[2];
+
+        var strData = ba2hex(Memory.readByteArray(data, dataLength));
+
+        console.log("CC_SHA256 dataIn: " + strData);
+    },
+    onLeave: function (retval) {
+        console.log("CC_SHA256 out: " + ba2hex(Memory.readByteArray(this.mdOut, 256/8)));
+    }
+});
 
 
 
