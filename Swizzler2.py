@@ -46,12 +46,13 @@ class MyPrompt(Cmd, object):
 
 
 	HOOKS = []
-	AVAILABLE_HOOKS = ['CommonCrypto', 'NSURL', 'SSLKillSwitch']
+	AVAILABLE_HOOKS = ['CommonCrypto', 'NSURL', 'SSLKillSwitch','LocalAuthenticator']
 
 	HOOK_DICT = {
 		'CommonCrypto': 'C.CommonCrypto.js',
 		'NSURL': 'Foundation.NSURL.js',
-		'SSLKillSwitch': 'SSLKillSwitch.js'
+		'SSLKillSwitch': 'SSLKillSwitch.js',
+		'LocalAuthenticator': 'LocalAuthentication.LAContext.js'
 	}
 
 	def do_hook(self, args):
